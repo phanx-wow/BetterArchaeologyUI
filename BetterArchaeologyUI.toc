@@ -1,0 +1,15 @@
+## Interface: 60200
+## Version: @project-version@
+
+## Title: Better Archaeology UI
+## Notes: Improves the Blizzard archaeology UI.
+## Notes-deDE: Verbessert die Blizzard-Archäologie-UI.
+## Notes-esES: Mejora la interfaz de arqueología de Blizzard.
+## Notes-esMX: Mejora la interfaz de arqueología de Blizzard.
+
+## Author: Phanx
+## X-Email: addons@phanx.net
+## X-Copyright: Copyright (c) 2015 Phanx. All rights reserved.
+## X-Website: https://github.com/Phanx/BetterArchaeologyUI
+
+BetterArchaeologyUI.lua
