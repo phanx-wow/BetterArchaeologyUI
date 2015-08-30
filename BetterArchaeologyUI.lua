@@ -1,21 +1,14 @@
-local keystoneFragments = {
---[[ automated in UpdateNextArtifact, needs testing
-	[109585] = 20, -- Arakkoa Cipher
-	[ 64394] = 12, -- Draenei Tome
-	[108439] = 20, -- Draenor Clan Orator Cane
-	[ 52843] = 12, -- Dwarf Rune Stone
-	[ 63127] = 12, -- Highborne Scroll
-	[ 79869] = 20, -- Mogu Statue Piece
-	[ 64396] = 12, -- Nerubian Obelisk
-	[109584] = 20, -- Ogre Missive
-	[ 64392] = 12, -- Orc Blood Text
-	[ 79868] = 20, -- Pandaren Pottery Shard
-	[ 95373] = 20, -- Mantid Amber Sliver
-	[ 64397] = 12, -- Tol'vir Hieroglyphic
-	[ 63128] = 12, -- Troll Tablet
-	[ 64395] = 12, -- Vrykul Rune Stick
-]]
-}
+local L = setmetatable({}, { __index = function(t, k) t[k] = k return k end })
+if GetLocale() == "deDE" then
+	L["%s is now solvable with keystones."] = "%s kann jetzt mit Schlüsselsteine restauriert werden."
+	L["%s is now solvable!"] = "%s kann jetzt restauriert werden."
+	L["Click for artifact details."] = "Klick für Artefakt-Einzelheiten."
+	L["Right-click to solve artifact."] = "Rechtsklick, um das Artefakt zu restaurieren."
+	L["Right-click to solve using %d keystones."] = "Rechtsklick, um das Artefakt mit %d Schlüsselsteine zu restaurieren."
+	L["Shift-right-click to solve without keystones."] = "Shift-Rechtsklick, um das Artefakt ohne Schlüsselsteine zu restaurieren."
+	L["Warning: %d/%d %s fragments is near the maximum!"] = "Achtung! %d%d Archäologie-Fragmente (%s) hat die Obergrenze fast erreicht!"
+end
+
 local items = {
 	117382,117354, -- Arakkoa
 	64456,64457, -- Draenei
@@ -29,10 +22,11 @@ local items = {
 	117385,117384, -- Ogre
 	64644, -- Orc
 	89685,89684, -- Pandaren
-	60847,64881,64904,94883,64885,64880,64657, -- Tol'vir
+	60847,64881,64904,64883,64885,64880,64657, -- Tol'vir
 	64377,69777,69824, -- Troll
 	64460,69775, -- Vrykul
 }
+
 local rarityColor = {
 	[0] = ITEM_QUALITY_COLORS[1].hex,
 	[1] = ITEM_QUALITY_COLORS[3].hex,
@@ -42,14 +36,11 @@ local rarityText = {
 	[1] = ITEM_QUALITY3_DESC,
 }
 
-local selectedRace
-hooksecurefunc("SetSelectedArtifact", function(race)
-	-- no GetSelectedArtifact
-	selectedRace = race
-end)
+local raceData = {}
+local keystoneFragments = {}
 
 local function RaceButton_OnEnter(self)
-	local data = self.data
+	local data = raceData[self:GetID()]
 	local artifactName = data.artifactName
 	local artifactLink = data.artifactLink
 	local artifactRarity = data.artifactRarity
@@ -59,7 +50,6 @@ local function RaceButton_OnEnter(self)
 	local numKeystones = data.numKeystones
 	local numSockets = data.numSockets
 	local numSocketsFilled = data.numSocketsFilled
-	--print(data.raceIndex, data.raceName, ">>>", data.artifactName, data.artifactRarity)
 
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
@@ -71,15 +61,15 @@ local function RaceButton_OnEnter(self)
 		GameTooltip:SetText(rarityColor[artifactRarity] .. artifactName)
 	end
 
-	GameTooltip:AddLine("Click for artifact details.")
+	GameTooltip:AddLine(L["Click for artifact details."])
 	if (haveFragments + bonusFragments) >= needFragments then
 		if numSocketsFilled > 0 then
-			GameTooltip:AddLine("Right-click to solve using " .. numSocketsFilled .. " keystones.")
+			GameTooltip:AddLine(format(L["Right-click to solve using %d keystones."], numSocketsFilled))
 			if haveFragments >= needFragments then
-				GameTooltip:AddLine("Shift-right-click to solve without keystones.")
+				GameTooltip:AddLine(L["Shift-right-click to solve without keystones."])
 			end
 		else
-			GameTooltip:AddLine("Right-click to solve artifact.")
+			GameTooltip:AddLine(L["Right-click to solve artifact."])
 		end
 	end
 	GameTooltip:Show()
@@ -89,7 +79,7 @@ local function RaceButton_OnClick(self, button)
 	if button == "LeftButton" then
 		self:OnLeftClick()
 	else
-		local data = self.data
+		local data = raceData[self:GetID()]
 		local haveFragments, needFragments, maxFragments = data.haveFragments, data.needFragments, data.maxFragments
 		local keystoneItemID, numKeystones = data.keystoneItemID, data.numKeystones
 		local bonusFragments = data.bonusFragments
@@ -100,9 +90,7 @@ local function RaceButton_OnClick(self, button)
 		SetSelectedArtifact(data.raceIndex)
 		if numKeystones > 0 and numSockets > 0 and not IsShiftKeyDown() then
 			for i = 1, min(numKeystones, numSockets) do
-				if SocketItemToArtifact() then
-					print("Added keystone")
-				else
+				if not SocketItemToArtifact() then
 					break
 				end
 			end
@@ -110,19 +98,18 @@ local function RaceButton_OnClick(self, button)
 		--[[ DEBUG ]]
 		for i = 1, numSockets do
 			if not ItemAddedToArtifact(i) then
-				print("Sockets: " .. (i-1) .. "/" .. numSockets .. " filled, " .. numKeystones .. " available")
+				print("Solving with " .. (i-1) .. "/" .. numSockets .. " keystones, " .. numKeystones .. " available")
 				break
 			end
 		end
 		if CanSolveArtifact() then
-			print("Solve")
 			SolveArtifact()
 		end
 	end
 end
 
 local function RaceButton_Update(self)
-	local data = self.data
+	local data = raceData[self:GetID()]
 	local raceName = data.raceName
 	local artifactName, artifactRarity = data.artifactName, data.artifactRarity
 	local haveFragments, needFragments, maxFragments = data.haveFragments, data.needFragments, data.maxFragments
@@ -180,7 +167,7 @@ local function Setup(self)
 			self["race"..i] = raceButton
 		end
 
-		raceButton.data = {
+		raceData[i] = {
 			raceIndex = i,
 			new = true,
 		}
@@ -237,7 +224,6 @@ end
 local UPDATE_INTERVAL, updateQueue, UpdateNextArtifact = 0.1, {}
 
 local function UpdateItemList()
-	print("UpdateItemList")
 	for i = #items, 1, -1 do
 		local id = items[i]
 		local name, link = GetItemInfo(id)
@@ -246,31 +232,27 @@ local function UpdateItemList()
 			tremove(items, i)
 		end
 	end
-	print(#items, "remaining")
 end
 
 function UpdateNextArtifact()
 	local self = tremove(updateQueue, 1)
 	if self then
-		local data = self.data
-		print("UpdateNextArtifact", data.raceName)
+		local data = raceData[self:GetID()]
 		local haveFragments, needFragments, maxFragments = data.haveFragments, data.needFragments, data.maxFragments
 		local keystoneItemID, numKeystones = data.keystoneItemID, data.numKeystones
 		SetSelectedArtifact(data.raceIndex)
 		local artifactName, artifactDescription, rarity, icon, spellDescription, numSockets = GetSelectedArtifactInfo()
 		local numSocketsFilled = min(numKeystones, numSockets)
 		if numKeystones > 0 and numSockets > 0 and not keystoneFragments[keystoneItemID] then
-			print("Finding keystone fragment count...")
 			if SocketItemToArtifact() then
 				local _, bonusFragments = GetArtifactProgress()
 				if bonusFragments > 0 then
 					keystoneFragments[keystoneItemID] = bonusFragments
-					print(GetItemLink(keystoneItemID), "adds", bonusFragments, "fragments")
 				else
-					print("Error getting bonus fragments!")
+					print("Error getting bonus fragments for", data.raceName)
 				end
 			else
-				print("Error socketing keystone!")
+				print("Error socketing keystone for", data.raceName)
 			end
 		end
 		-- Update data
@@ -280,12 +262,18 @@ function UpdateNextArtifact()
 		data.bonusFragments = numSocketsFilled * (keystoneFragments[keystoneItemID] or 0)
 		data.numSockets = numSockets
 		data.numSocketsFilled = numSocketsFilled
-		RaceButton_Update(self)
-		updateQueue[self] = nil
-		--print("Updated:", data.raceName)
+		-- Alert if newly solvable
+		data.wasSolvable, data.isSolvable = data.isSolvable or 0, (haveFragments >= needFragments) and 2 or ((haveFragments + data.bonusFragments) >= needFragments) and 1 or 0
+		if data.isSolvable > data.wasSolvable then
+			UIErrorsFrame:AddMessage("|T" .. data.raceIcon .. ":20:23:0:10:128:128:73:83|t " .. format(canSolve == 2 and L["%s is now solvable!"] or L["%s is now solvable with keystones."], data.artifactName), 0.2, 1, 0.2)
+		end
+		-- Update item data
 		if rarity > 0 and not items[artifactName] then
 			UpdateItemList()
 		end
+		-- Update UI
+		RaceButton_Update(self)
+		updateQueue[self] = nil
 	end
 	if #updateQueue > 0 then
 		C_Timer.After(UPDATE_INTERVAL, UpdateNextArtifact)
@@ -301,10 +289,10 @@ local function Update(self)
 	end
 	for i = 1, ARCHAEOLOGY_MAX_RACES do
 		local raceButton = self["race"..i]
-		local raceName, _, keystoneItemID, haveFragments, needFragments, maxFragments = GetArchaeologyRaceInfo(i)
+		local raceName, raceIcon, keystoneItemID, haveFragments, needFragments, maxFragments = GetArchaeologyRaceInfo(i)
 		local numKeystones = GetItemCount(keystoneItemID)
 
-		local data = raceButton.data
+		local data = raceData[i]
 		if data.new or data.haveFragments ~= haveFragments or data.needFragments ~= needFragments or data.numKeystones ~= numKeystones then
 			-- Unknown data, set to dummy values pending update
 			if data.new or (data.needFragments == needFragments and data.haveFragments < haveFragments) then
@@ -315,13 +303,10 @@ local function Update(self)
 				data.bonusFragments = 0
 				data.numSockets = 0
 				data.numSocketsFilled = 0
-			elseif (haveFragments + data.bonusFragments) >= needFragments and (data.haveFragments + data.bonusFragments) < needFragments then
-				-- Alert if newly solvable
-				UIErrorsFrame:AddMessage(data.artifactName .. " is now solvable!", 0.2, 1, 0.2)
-			end
+		end
 			-- Alert if fragments at/near max
 			if (haveFragments + 15) > maxFragments and (data.haveFragments < haveFragments) then
-				UIErrorsFrame:AddMessage("Approaching maximum number of " .. raceName .. " fragments!")
+				UIErrorsFrame:AddMessage(format(L["Warning: %d/%d %s fragments is near the maximum!"], haveFragments, maxFragments, raceName))
 			end
 			-- Known data, set to current values
 			data.haveFragments = haveFragments
@@ -329,11 +314,11 @@ local function Update(self)
 			data.needFragments = needFragments
 			data.maxFragments = maxFragments
 			data.numKeystones = numKeystones
+			data.raceIcon = raceIcon
 			data.raceName = raceName
 			-- Queue update, skip if no projects for this race yet
 			if needFragments > 0 and not updateQueue[raceButton] then
 				-- Don't queue the same race twice
-				--print("Queue for update:", raceName)
 				tinsert(updateQueue, raceButton)
 			end
 			-- Remove flag on new things
