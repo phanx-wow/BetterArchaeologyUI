@@ -1,31 +1,11 @@
-local L = setmetatable({}, { __index = function(t, k) t[k] = k return k end })
-if GetLocale() == "deDE" then
-	L["%s is now solvable with keystones."] = "%s kann jetzt mit Schlüsselsteine restauriert werden."
-	L["%s is now solvable!"] = "%s kann jetzt restauriert werden."
-	L["Click for artifact details."] = "Klick für Artefakt-Einzelheiten."
-	L["Right-click to solve artifact."] = "Rechtsklick, um das Artefakt zu restaurieren."
-	L["Right-click to solve using %d keystones."] = "Rechtsklick, um das Artefakt mit %d Schlüsselsteine zu restaurieren."
-	L["Shift-right-click to solve without keystones."] = "Shift-Rechtsklick, um das Artefakt ohne Schlüsselsteine zu restaurieren."
-	L["Warning: %d/%d %s fragments is near the maximum!"] = "Achtung! %d%d Archäologie-Fragmente (%s) hat die Obergrenze fast erreicht!"
-end
+local _, private = ...
+local L = private.L
+local itemLink = private.itemLink
+local itemRace = private.itemRace
+local sortedItems = private.sortedItems
+local UpdateItemList = private.UpdateItemList
 
-local items = {
-	117382,117354, -- Arakkoa
-	64456,64457, -- Draenei
-	117380,116985, -- Draenor Clans
-	64489,64373,64372,64488, -- Dwarf
-	69764,60954,69776,60955,69821, -- Fossil
-	95391,95392, -- Mantid
-	89614,89611, -- Mogu
-	64481,64482, -- Nerubian
-	64646,64643,64645,64651,64361,64358,64383, -- Night Elf
-	117385,117384, -- Ogre
-	64644, -- Orc
-	89685,89684, -- Pandaren
-	60847,64881,64904,64883,64885,64880,64657, -- Tol'vir
-	64377,69777,69824, -- Troll
-	64460,69775, -- Vrykul
-}
+------------------------------------------------------------------------
 
 local rarityColor = {
 	[0] = ITEM_QUALITY_COLORS[1].hex,
@@ -155,7 +135,7 @@ local function RaceButton_Update(self)
 	end
 end
 
-local function Setup(self)
+local function Initialize(self)
 	local numRaces = GetNumArchaeologyRaces()
 	local colBreak = ceil(numRaces/2)+1
 	ARCHAEOLOGY_MAX_RACES = numRaces
@@ -221,18 +201,9 @@ local function Setup(self)
 	self.nextPageButton:Hide()
 end
 
-local UPDATE_INTERVAL, updateQueue, UpdateNextArtifact = 0.1, {}
+------------------------------------------------------------------------
 
-local function UpdateItemList()
-	for i = #items, 1, -1 do
-		local id = items[i]
-		local name, link = GetItemInfo(id)
-		if name and link then
-			items[name] = link
-			tremove(items, i)
-		end
-	end
-end
+local UPDATE_INTERVAL, updateQueue, UpdateNextArtifact = 0.1, {}
 
 function UpdateNextArtifact()
 	local self = tremove(updateQueue, 1)
@@ -255,9 +226,13 @@ function UpdateNextArtifact()
 				print("Error socketing keystone for", data.raceName)
 			end
 		end
+		-- Update item data
+		if rarity > 0 and not itemLink[artifactName] then
+			UpdateItemList()
+		end
 		-- Update data
 		data.artifactName = artifactName
-		data.artifactLink = items[artifactName]
+		data.artifactLink = itemLink[artifactName]
 		data.artifactRarity = rarity
 		data.bonusFragments = numSocketsFilled * (keystoneFragments[keystoneItemID] or 0)
 		data.numSockets = numSockets
@@ -266,10 +241,6 @@ function UpdateNextArtifact()
 		data.wasSolvable, data.isSolvable = data.isSolvable or 0, (haveFragments >= needFragments) and 2 or ((haveFragments + data.bonusFragments) >= needFragments) and 1 or 0
 		if data.isSolvable > data.wasSolvable then
 			UIErrorsFrame:AddMessage("|T" .. data.raceIcon .. ":20:23:0:10:128:128:73:83|t " .. format(canSolve == 2 and L["%s is now solvable!"] or L["%s is now solvable with keystones."], data.artifactName), 0.2, 1, 0.2)
-		end
-		-- Update item data
-		if rarity > 0 and not items[artifactName] then
-			UpdateItemList()
 		end
 		-- Update UI
 		RaceButton_Update(self)
@@ -281,12 +252,12 @@ function UpdateNextArtifact()
 end
 
 local function Update(self)
-	if #items > 0 then
-		UpdateItemList()
-	end
+	UpdateItemList()
+
 	if ARCHAEOLOGY_MAX_RACES < GetNumArchaeologyRaces() then
-		Setup(self)
+		Initialize(self)
 	end
+
 	for i = 1, ARCHAEOLOGY_MAX_RACES do
 		local raceButton = self["race"..i]
 		local raceName, raceIcon, keystoneItemID, haveFragments, needFragments, maxFragments = GetArchaeologyRaceInfo(i)
@@ -333,25 +304,8 @@ local function Update(self)
 	end
 end
 
-local function Hook()
-	UpdateItemList()
-	hooksecurefunc("ArchaeologyFrame_UpdateSummary", Update)
-	hooksecurefunc(ArchaeologyFrame.summaryPage, "UpdateFrame", Update)
-	if ArchaeologyFrameSummaryPage:IsVisible() then
-		Update(ArchaeologyFrameSummaryPage)
-	end
-end
-
-if ArchaeologyFrameSummaryPage then
-	Hook()
-else
-	local f = CreateFrame("Frame")
-	f:RegisterEvent("ADDON_LOADED")
-	f:SetScript("OnEvent", function(f, e, addon)
-		if addon == "Blizzard_ArchaeologyUI" then
-			f:UnregisterEvent(e)
-			f:SetScript("OnEvent", nil)
-			Hook()
-		end
-	end)
+hooksecurefunc("ArchaeologyFrame_UpdateSummary", Update)
+hooksecurefunc(ArchaeologyFrame.summaryPage, "UpdateFrame", Update)
+if ArchaeologyFrameSummaryPage:IsVisible() then
+	Update(ArchaeologyFrameSummaryPage)
 end

@@ -12,4 +12,8 @@
 ## X-Copyright: Copyright (c) 2015 Phanx. All rights reserved.
 ## X-Website: https://github.com/Phanx/BetterArchaeologyUI
 
-BetterArchaeologyUI.lua
+## LoadsWith: Blizzard_ArchaeologyUI
+
+Core.lua
+CurrentArtifacts.lua
+MissingArtifacts.lua
