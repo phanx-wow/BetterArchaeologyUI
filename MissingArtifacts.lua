@@ -64,7 +64,7 @@ end
 ------------------------------------------------------------------------
 
 do
-	local tab = CreateFrame("Button", nil, "ArchaeologyFrame")
+	local tab = CreateFrame("Button", nil, ArchaeologyFrame)
 	tab:SetPoint("TOPLEFT", ArchaeologyFrame, "TOPRIGHT", -22, -190) -- tab1 -50, tab2 -120
 	tab:SetSize(63, 57)
 	tab:SetID(3)
@@ -101,7 +101,7 @@ end
 ------------------------------------------------------------------------
 
 do
-	local page = CreateFrame("Frame", nil, "ArchaeologyFrame")
+	local page = CreateFrame("Frame", nil, ArchaeologyFrame)
 	page:Hide()
 	ArchaeologyFrame.missingPage = page
 
@@ -162,7 +162,8 @@ do
 	end)
 	page.prevPageButton = prevPageButton
 
-	local nextPageButton:SetPoint("LEFT", prevPageButton, "RIGHT", 8, 0)
+	local nextPageButton = CreateFrame("Button", "$parentNextPageButton", page, "UIPanelSquareButton")
+	nextPageButton:SetPoint("LEFT", prevPageButton, "RIGHT", 8, 0)
 	SquareButton_SetIcon(nextPageButton, "RIGHT")
 	nextPageButton:SetScript("OnClick", function()
 		PlaySound("igSpellBookOpen")
