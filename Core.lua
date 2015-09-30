@@ -1,5 +1,13 @@
+--[[--------------------------------------------------------------------
+	Better Archaeology UI
+	Improves the Blizzard archaeology UI.
+	Copyright (c) 2015 Phanx. All rights reserved.
+	http://www.wowinterface.com/downloads/info23693
+	http://www.curse.com/addons/wow/better-archaeology-ui
+	https://github.com/Phanx/BetterArchaeologyUI
+----------------------------------------------------------------------]]
+
 local _, private = ...
-BAUI = private
 
 local L = setmetatable({}, { __index = function(t, k) t[k] = k return k end })
 private.L = L
@@ -11,15 +19,15 @@ if GetLocale() == "deDE" then
 	L["%s is now solvable with keystones."] = "%s kann jetzt mit Schlüsselsteine restauriert werden."
 	L["Click for artifact details."] = "Klick für Artefakt-Einzelheiten."
 	L["Created by: %s"] = "Hergestellt von: %s" -- not used
-	L["Fragments required:"] = "Fragmente benötigt:"
-	L["Race:"] = "Volk:"
+	L["Fragments required:"] = "Fragmente benötigt:" -- not used
+	L["Race:"] = "Volk:" -- not used
 	L["Right-click to solve artifact."] = "Rechtsklick, um das Artefakt zu restaurieren."
 	L["Right-click to solve using %d keystones."] = "Rechtsklick, um das Artefakt mit %d Schlüsselsteine zu restaurieren."
 	L["Shift-right-click to solve without keystones."] = "Shift-Rechtsklick, um das Artefakt ohne Schlüsselsteine zu restaurieren."
 	L["Warning: %d/%d %s fragments is near the maximum!"] = "Achtung! %d/%d Archäologie-Fragmente von %s hat die Obergrenze fast erreicht!"
 	-- MissingArtifacts.lua
 	L["Future Artifacts"] = "Zukünftige Artifakte"
-	L["This tab shows interesting artifacts you have not yet discovered."] = "Dieser Reiter zeigt interessante Artifakte, die Ihr nicht noch restauriert habt."
+	L["This tab shows interesting artifacts you have not yet discovered."] = "Dieser Reiter zeigt interessante Artifakte, die Ihr nicht noch entdeckt habt."
 	L["You have already completed all of the interesting artifacts for this race."] = "Ihr habt alle interessanten Artefakte dieses Volkes bereits restauriert."
 elseif GetLocale():match("^es") then
 	-- Core.lua
@@ -29,8 +37,8 @@ elseif GetLocale():match("^es") then
 	L["%s is now solvable with keystones."] = "%s es ahora completable con piedras angulares."
 	L["Click for artifact details."] = "Clic para detailles sobre este artefacto"
 	L["Created by: %s"] = "Criado por: %s" -- not used
-	L["Fragments required:"] = "Piezas necesarios:"
-	L["Race:"] = "Raza:"
+	L["Fragments required:"] = "Piezas necesarios:" -- not used
+	L["Race:"] = "Raza:" -- not used
 	L["Right-click to solve artifact."] = "Clic derecho para completar este artefacto."
 	L["Right-click to solve using %d keystones."] = "Clic derecho para completar este artefacto con %d piedras angulares."
 	L["Shift-right-click to solve without keystones."] = "Mayús-clic derecho para completar este artefacto sin piedras angulares."

@@ -1,3 +1,12 @@
+--[[--------------------------------------------------------------------
+	Better Archaeology UI
+	Improves the Blizzard archaeology UI.
+	Copyright (c) 2015 Phanx. All rights reserved.
+	http://www.wowinterface.com/downloads/info23693
+	http://www.curse.com/addons/wow/better-archaeology-ui
+	https://github.com/Phanx/BetterArchaeologyUI
+----------------------------------------------------------------------]]
+
 local _, private = ...
 local L = private.L
 local itemContains   = private.itemContains
@@ -209,7 +218,7 @@ do
 	local title = futurePage:CreateFontString(nil, "OVERLAY", "SystemFont_Med1")
 	title:SetPoint("TOP", 0, -55)
 	title:SetTextColor(0.25, 0.13, 0)
-	title:SetText(L["Missing Artifacts"])
+	title:SetText(L["Future Artifacts"])
 
 	local titleLeft = futurePage:CreateTexture(nil, "OVERLAY")
 	titleLeft:SetPoint("RIGHT", title, "LEFT", -8, 0)

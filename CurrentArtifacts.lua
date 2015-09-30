@@ -1,3 +1,12 @@
+--[[--------------------------------------------------------------------
+	Better Archaeology UI
+	Improves the Blizzard archaeology UI.
+	Copyright (c) 2015 Phanx. All rights reserved.
+	http://www.wowinterface.com/downloads/info23693
+	http://www.curse.com/addons/wow/better-archaeology-ui
+	https://github.com/Phanx/BetterArchaeologyUI
+----------------------------------------------------------------------]]
+
 local _, private = ...
 local L = private.L
 local itemContains   = private.itemContains
