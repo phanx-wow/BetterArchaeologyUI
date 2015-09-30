@@ -1,8 +1,8 @@
 local _, private = ...
 local L = private.L
-local itemLink = private.itemLink
-local itemRace = private.itemRace
-local sortedItems = private.sortedItems
+local itemContains   = private.itemContains
+local itemFromSpell  = private.itemFromSpell
+local linkFromItem   = private.linkFromItem
 local UpdateItemList = private.UpdateItemList
 
 ------------------------------------------------------------------------
@@ -34,13 +34,24 @@ local function RaceButton_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
 	if artifactLink then
-		GameTooltip:SetHyperlink(artifactLink)
+		local contents = itemContains[artifactLink]
+		if contents then -- Canopic Jar
+			GameTooltip:SetHyperlink(contents.link)
+			GameTooltip:AddLine(format(contents.text, artifactName), nil, nil, nil, nil, true)
+			GameTooltip:Show()
+		else
+			GameTooltip:SetHyperlink(artifactLink)
+		end
 	elseif GetCVarBool("colorblindMode") then
 		GameTooltip:SetText(artifactName .. " (" .. rarityText[artifactRarity] .. ")")
 	else
 		GameTooltip:SetText(rarityColor[artifactRarity] .. artifactName)
 	end
-
+--[[
+	if itemFromSpell[artifactName] then
+		GameTooltip:AddLine(format(L["Created by %s"].."|n", artifactName))
+	end
+]]
 	GameTooltip:AddLine(L["Click for artifact details."])
 	if (haveFragments + bonusFragments) >= needFragments then
 		if numSocketsFilled > 0 then
@@ -226,13 +237,14 @@ function UpdateNextArtifact()
 				print("Error socketing keystone for", data.raceName)
 			end
 		end
+		local linkName = artifactName .. "|" .. data.raceName -- internal data stores item|race to differentiate same named items
 		-- Update item data
-		if rarity > 0 and not itemLink[artifactName] then
+		if rarity > 0 and not linkFromItem[linkName] then
 			UpdateItemList()
 		end
 		-- Update data
 		data.artifactName = artifactName
-		data.artifactLink = itemLink[artifactName]
+		data.artifactLink = linkFromItem[linkName]
 		data.artifactRarity = rarity
 		data.bonusFragments = numSocketsFilled * (keystoneFragments[keystoneItemID] or 0)
 		data.numSockets = numSockets
@@ -309,3 +321,31 @@ hooksecurefunc(ArchaeologyFrame.summaryPage, "UpdateFrame", Update)
 if ArchaeologyFrameSummaryPage:IsVisible() then
 	Update(ArchaeologyFrameSummaryPage)
 end
+
+------------------------------------------------------------------------
+-- Show tooltip when mousing over icon or name on the artifact page
+
+local tipper = CreateFrame("Frame", "$parentTooltipper", ArchaeologyFrameArtifactPage)
+tipper:SetPoint("LEFT", ArchaeologyFrameArtifactPageIcon)
+tipper:SetSize(62 + 330, 62) -- icon is 62x62, name is 330 wide
+tipper:SetScript("OnLeave", GameTooltip_Hide)
+tipper:SetScript("OnEnter", function(self)
+	if self.link then
+		GameTooltip:SetOwner(self, "ANCHOR_NONE")
+		GameTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT")
+		GameTooltip:SetHyperlink(self.link)
+	end
+end)
+
+hooksecurefunc("ArchaeologyFrame_CurrentArtifactUpdate", function(self)
+	local name = self.currentName .. "|" .. GetArchaeologyRaceInfo(self.raceID) -- race name appended to differentiate same named items
+	if name then
+		tipper.link = linkFromItem[name]
+	end
+	-- Also replace spell name with item name on the artifact page
+	-- ex: the Ancient Frostwolf Fang project creates Frostwolf Ghostpup
+	local item = itemFromSpell[name]
+	if item then
+		self.artifactName:SetText(item)
+	end
+end)
