@@ -1,10 +1,10 @@
 --[[--------------------------------------------------------------------
 	Better Archaeology UI
 	Improves the Blizzard archaeology UI.
-	Copyright (c) 2015 Phanx. All rights reserved.
-	http://www.wowinterface.com/downloads/info23693
-	http://www.curse.com/addons/wow/better-archaeology-ui
+	Copyright (c) 2015, 2016 Phanx. All rights reserved.
 	https://github.com/Phanx/BetterArchaeologyUI
+	http://www.curse.com/addons/wow/better-archaeology-ui
+	http://www.wowinterface.com/downloads/info23693
 ----------------------------------------------------------------------]]
 
 local _, private = ...
