@@ -184,7 +184,7 @@ local function Initialize(self)
 		elseif i == colBreak then
 			raceButton:SetPoint("TOPLEFT", self, "TOP", 5, -50)
 		else
-			raceButton:SetPoint("TOPLEFT", self["race"..(i-1)], "BOTTOMLEFT", 0, -3)
+			raceButton:SetPoint("TOPLEFT", self["race"..(i-1)], "BOTTOMLEFT", 0, 0)
 		end
 
 		raceButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
@@ -197,6 +197,8 @@ local function Initialize(self)
 		raceButton.raceName:SetPoint("BOTTOMLEFT", raceButton, "RIGHT", 3, 1)
 		raceButton.raceName:SetJustifyH("LEFT")
 		raceButton.raceName:SetTextColor(0, 0, 0)
+		raceButton.raceName:SetWidth(0)
+		raceButton.raceName:SetWordWrap(false)
 
 		local bar = CreateFrame("StatusBar", nil, raceButton)
 		bar:SetPoint("TOPLEFT", raceButton, "RIGHT", 3, -1)
