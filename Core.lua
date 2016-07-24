@@ -53,21 +53,117 @@ end
 
 local data = {
 	-- keystoneID,raceIndex,itemID1,itemID2,...
-	{109585,false,117382,117354}, -- Arakkoa
-	{64394,false,64456,64457}, -- Draenei
-	{108439,false,117380,116985}, -- Draenor Clans
-	{52843,false,64489,64373,64372,64488}, -- Dwarf
-	{0,false,69764,60954,69776,60955,69821}, -- Fossil
-	{95373,false,95391,95392}, -- Mantid
-	{79869,false,89614,89611}, -- Mogu
-	{64396,false,64481,64482}, -- Nerubian
-	{63127,false,64646,64643,64645,64651,64361,64358,64383}, -- Night Elf
-	{109584,false,117385,117384}, -- Ogre
-	{64392,false,64644}, -- Orc
-	{79868,false,89685,89684}, -- Pandaren
-	{64397,false,60847,64881,64904,64883,64885,64880,64657}, -- Tol'vir
-	{63128,false,64377,69777,69824}, -- Troll
-	{64395,false,64460,69775}, -- Vrykul
+	{
+		109585, false, -- Arakkoa
+		117354, -- Ancient Nest Guardian
+		117382, -- Beakbreaker of Terokk
+	},
+	{
+		130905, false, -- Demonic
+		131743, -- Blood of Young Mannoroth
+		131724, -- Crystalline Eye of Undravius
+		131735, -- Imp Generator
+		131732, -- Purple Hills of Mac'Aree
+		136922, -- Wyrmy Tunkins
+	}, 
+	{
+		64394, false, -- Draenei
+		64456, -- Arrival of the Naaru
+		64457, -- The Last Relic of Argus
+	},
+	{
+		108439, false, -- Draenor Clans
+		117380, -- Frostwolf Ghostpup
+		116985, -- Headdress of the First Shaman
+	},
+	{
+		52843, false, -- Dwarf
+		64373, -- Chalice of the Mountain Kings
+		64372, -- Clockwork Gnome
+		64489, -- Staff of Sorcerer-Thane Thaurissan
+		64488, -- The Innkeeper's Daughter
+	},
+	{
+		0, false, -- Fossil
+		69776, -- Ancient Amber
+		69764, -- Extinct Turtle Shell
+		60955, -- Fossilized Hatchling
+		60954, -- Fossilized Raptor
+		69821, -- Pterrordax Hatchling
+	},
+	{
+		130903, false, -- Highborne
+		131740, -- Crown Jewels of Suramar
+		131745, -- Key of Kalyndras
+		131744, -- Key to Nar'thalas Academy
+		131717, -- Starlight Beacon
+	},
+	{
+		130904, false, -- Highmountain Tauren
+		131736, -- Prizerock Neckband
+		131733, -- Spear of Rethu
+		131734, -- Spirit of Eche'ro
+	},
+	{
+		95373, false, -- Mantid
+		95391, -- Mantid Sky Reaver
+		95392, -- Sonic Pulse Generator
+	},
+	{
+		79869, false, -- Mogu
+		89614, -- Anatomical Dummy
+		89611, -- Quilen Statuette
+	},
+	{
+		64396, false, -- Nerubian
+		64481, -- Blessing of the Old God
+		64482, -- Puzzle Box of Yogg-Saron
+	},
+	{
+		63127, false, -- Night Elf
+		64646, -- Bones of Transformation
+		64361, -- Druid and Priest Statue Set
+		64358, -- Highborne Soul Mirror
+		64383, -- Kaldorei Wind Chimes
+		64643, -- Queen Azshara's Dressing Gown
+		64645, -- Tyrande's Favorite Doll
+		64651, -- Wisp Amulet
+	},
+	{
+		109584, false, -- Ogre
+		117385, -- Sorcerer-King Toe Ring
+		117384, -- Warmaul of the Warmaul Chieftain
+	},
+	{
+		64392, false, -- Orc
+		64644 -- Headdress of the First Shaman
+	},
+	{
+		79868, false, -- Pandaren
+		89685, -- Spear of Xuen
+		89684, -- Umbrella of Chi-Ji
+	},
+	{
+		64397, false, -- Tol'vir
+		64657, -- Canopic Jar
+		60847, -- Crawling Claw
+		64881, -- Pendant of the Scarab Storm
+		64904, -- Ring of the Boy Emperor
+		64883, -- Scepter of Azj'Aqir
+		64885, -- Scimitar of the Sirocco
+		64880, -- Staff of Ammunae
+	},
+	{
+		63128, false, -- Troll
+		69777, -- Haunted War Drum
+		69824, -- Voodoo Figurine
+		64377, -- Zin'rokh, Destroyer of Worlds
+	},
+	{
+		64395, false, -- Vrykul
+		64460, -- Nifflevar Bearded Axe
+		69775, -- Vrykul Drinking Horn
+	},
 }
 
 ------------------------------------------------------------------------
@@ -179,3 +275,4 @@ for i = 1, #data do
 end
 
 private.UpdateItemList()
+C_Timer.After(5, private.UpdateItemList) -- lazy solution to items not in cache
