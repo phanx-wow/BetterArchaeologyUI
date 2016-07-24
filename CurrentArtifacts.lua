@@ -169,6 +169,9 @@ local function Initialize(self)
 
 		raceData[i] = {
 			raceIndex = i,
+			haveFragments = 0,
+			needFragments = 0,
+			maxFragments = 0,
 			new = true,
 		}
 
@@ -295,7 +298,7 @@ local function Update(self)
 				data.bonusFragments = 0
 				data.numSockets = 0
 				data.numSocketsFilled = 0
-		end
+			end
 			-- Alert if fragments at/near max
 			if (haveFragments + 15) > maxFragments and (data.haveFragments < haveFragments) then
 				UIErrorsFrame:AddMessage(format(L["Warning: %d/%d %s fragments is near the maximum!"], haveFragments, maxFragments, raceName))
