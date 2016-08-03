@@ -3,7 +3,7 @@
 	Improves the Blizzard archaeology UI.
 	Copyright (c) 2015, 2016 Phanx. All rights reserved.
 	https://github.com/Phanx/BetterArchaeologyUI
-	http://www.curse.com/addons/wow/better-archaeology-ui
+	https://mods.curse.com/addons/wow/better-archaeology-ui
 	http://www.wowinterface.com/downloads/info23693
 ----------------------------------------------------------------------]]
 

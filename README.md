@@ -5,6 +5,6 @@ Better Archaeology UI
 **DE** — Verbessert die Blizzard-Archäologie-UI.
 **ES** — Mejora la interfaz de arqueología de Blizzard.
 
-* [Download on Curse](http://www.curse.com/addons/wow/better-archaeology-ui)
+* [Download on Curse](https://mods.curse.com/addons/wow/better-archaeology-ui)
 * [Download on WoWInterface](http://www.wowinterface.com/downloads/info23693-BetterArchaeologyUI.html)
 
