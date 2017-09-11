@@ -124,8 +124,8 @@ do
 	ArchaeologyFrame.tab3 = futureTab
 
 	futureTab:SetScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_SPELLBOOK_OPEN)
 		ArchaeologyFrame_OnTabClick(self)
-		PlaySound("igSpellBookOpen")
 	end)
 	futureTab:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
@@ -283,7 +283,7 @@ do
 	prevPageButton:SetPoint("LEFT", futurePage.pageText, "RIGHT", 8, 0)
 	SquareButton_SetIcon(prevPageButton, "LEFT")
 	prevPageButton:SetScript("OnClick", function()
-		PlaySound("igSpellBookOpen")
+		PlaySound(SOUNDKIT.IG_SPELLBOOK_OPEN)
 		futurePage.currentPage = futurePage.currentPage - 1
 		Update(futurePage)
 	end)
@@ -293,7 +293,7 @@ do
 	nextPageButton:SetPoint("LEFT", prevPageButton, "RIGHT", 8, 0)
 	SquareButton_SetIcon(nextPageButton, "RIGHT")
 	nextPageButton:SetScript("OnClick", function()
-		PlaySound("igSpellBookOpen")
+		PlaySound(SOUNDKIT.IG_SPELLBOOK_OPEN)
 		futurePage.currentPage = futurePage.currentPage + 1
 		Update(futurePage)
 	end)
